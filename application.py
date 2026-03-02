@@ -118,8 +118,24 @@ def insert_data_into_db(payload):
     """
     create_db_table()
     # TODO: Implement the database call    
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        insert_sql = """
+        INSERT INTO events (title, description, image_url, date, location)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        cursor.execute(insert_sql, (
+            payload.get("title"),
+            payload.get("description"),
+            payload.get("image_url"),
+            payload.get("date"),
+            payload.get("location")
+        ))
+    connection.commit()
+    connection.close()
+
     
-    raise NotImplementedError("Database insert function not implemented.")
+    #raise NotImplementedError("Database insert function not implemented.")
 
 #Database Function Stub
 def fetch_data_from_db():
@@ -128,8 +144,21 @@ def fetch_data_from_db():
     Implement this function to fetch your data from the database.
     """
     # TODO: Implement the database call
+    connection = get_db_connection()
+    with connection.cursor() as cursor:
+        fetch_sql = "SELECT * FROM events ORDER BY date ASC"
+        cursor.execute(fetch_sql)
+        
+        rows = cursor.fetchall()
+        cols = [desc[0] for desc in cursor.description]
+        data = [dict(zip(cols, row)) for row in rows]
+        connection.close()
+        
+        return data
     
-    raise NotImplementedError("Database fetch function not implemented.")
+    
+
+    #raise NotImplementedError("Database fetch function not implemented.")
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
