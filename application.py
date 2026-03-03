@@ -144,6 +144,7 @@ def fetch_data_from_db():
     Implement this function to fetch your data from the database.
     """
     # TODO: Implement the database call
+    create_db_table()
     connection = get_db_connection()
     with connection.cursor() as cursor:
         fetch_sql = "SELECT * FROM events ORDER BY date ASC"
@@ -153,7 +154,7 @@ def fetch_data_from_db():
         cols = [desc[0] for desc in cursor.description]
         data = [dict(zip(cols, row)) for row in rows]
         connection.close()
-        
+
         return data
     
     
